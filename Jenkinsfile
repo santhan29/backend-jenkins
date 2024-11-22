@@ -24,9 +24,13 @@ pipeline {
                 sh 'npm install'
             }
         }
-        stage('Deploy') {  
+        stage('Docker build') {
+     
             steps { 
-                sh 'echo this is deployment' 
+                sh """
+                docker build -t santhan29/backend:${appVersion} 
+                docker images
+                """
             }
         }   
     } 
