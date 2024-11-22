@@ -25,10 +25,9 @@ pipeline {
             }
         }
         stage('Docker build') {
-     
             steps { 
                 sh """
-                docker build -t santhan29/backend:${appVersion} 
+                docker build -t santhan29/backend:${appVersion} . 
                 docker images
                 """
             }
