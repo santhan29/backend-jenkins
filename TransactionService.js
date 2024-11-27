@@ -59,6 +59,5 @@ module.exports = {
     findTransactionById,
     deleteAllTransactions,
     deleteTransactionById
-};
-
+}; 
 
