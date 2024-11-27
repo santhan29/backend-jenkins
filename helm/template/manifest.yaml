@@ -4,42 +4,42 @@ metadata:
   name: backend
   namespace: expense
 data:
-  DB_HOST: {{ .Values.configMap.db_host }} 
+  DB_HOST: {{ .Values.configMap.db_host }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
   namespace: expense
-  labels:    #replica set labels
+  labels:
     app: backend
-    tier: app
-    project: expense 
+    tier: api
+    project: expense
 spec:
-  # modify replicas according to your case
   replicas: 2
   selector:
-    matchLabels:  #these are used to select the pod to create replicas
+    matchLabels:
       app: backend
-      tier: app
+      tier: api
       project: expense
-  template:   #this is pod template
+  template:
     metadata:
-      labels:  #these labels belongs to pod 
+      labels:
         app: backend
-        tier: app
+        tier: api
         project: expense
     spec:
       containers:
       - name: backend
-        image: "{{ .Values.deployment.imageURL}}:{{ .Values.deployment.imageVersion }}"
-        resources: 
+        image: "{{ .Values.deployment.imageURL }}:{{ .Values.deployment.imageVersion }}"
+        resources:
           requests:
             cpu: 100m
             memory: 128Mi
-          limits:  #limits should be greater than or equal to requests not less than 
-            cpu: 100m 
-            memory: 128Mi 
+          # limits is greater than or equal to requests
+          limits:
+            cpu: 100m
+            memory: 128Mi
         envFrom:
         - configMapRef:
             name: backend
@@ -47,18 +47,18 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
- name: backend
- namespace: expense
-spec: 
+  name: backend
+  namespace: expense
+spec:
   selector:
     app: backend
-    tier: app
+    tier: api
     project: expense
   ports:
-    - name: backend-port
-      protocol: TCP
-      port: 8080  #service port
-      targetPort: 8080 #container port 
+  - name: backend-port
+    protocol: TCP
+    port: 8080 # service port
+    targetPort: 8080 # container port
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
@@ -72,4 +72,4 @@ spec:
    name: backend
  minReplicas: 1
  maxReplicas: 10
- targetCPUUtilizationPercentage: {{ .Values.hpa.cpuUtilisation }} 
+ targetCPUUtilizationPercentage: {{ .Values.hpa.cpuUtilization }} # usually 75 in real environment
