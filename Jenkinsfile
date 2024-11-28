@@ -40,13 +40,13 @@ pipeline {
                 } 
             }
         }
-        // stage('SQuality Gate') {
-        //     steps {
-        //         timeout(time: 5, unit: 'MINUTES') {
-        //             waitForQualityGate abortPipeline: true
-        //         }
-        //     }
-        // } 
+        stage('SQuality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        } 
         stage('Docker build') {
             steps { 
                 withAWS(region: 'us-east-1', credentials: 'aws-credentials') {
