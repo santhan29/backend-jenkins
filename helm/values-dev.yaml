@@ -3,7 +3,7 @@ configMap:
 
 deployment:
   imageVersion: IMAGE_VERSION
-  imageURL: 361769595563.dkr.ecr.us-east-1.amazonaws.com/expense/dev/backend
+  imageURL: 361769595563.dkr.ecr.us-east-1.amazonaws.com/expense/dev/backend 
 
 hpa:
   cpuUtilisation: 20 
