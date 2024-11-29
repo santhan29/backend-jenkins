@@ -70,7 +70,9 @@ pipeline {
                 expression { params.deploy }
             }
             steps{
-                build job: 'backend-cd-jenkins', parameters: [string(name: 'version', value: "$appVersion"),string(name: 'ENVIRONMENT', value: "dev")], wait: true
+                build job: 'backend-cd', parameters: [
+                    string(name: 'VERSION', value: "$appVersion"),
+                    string(name: 'ENVIRONMENT', value: "dev")], wait: true 
             }
         }
     } 
