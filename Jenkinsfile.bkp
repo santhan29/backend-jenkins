@@ -6,9 +6,6 @@ pipeline {
         timeout(time: 30, unit: 'MINUTES') 
         disableConcurrentBuilds() 
     }
-    parameters{
-        booleanParam(name: 'deploy', defaultValue: false, description: 'Select to deploy or not')
-    }
     environment{
         appVersion = ''  // we can use this env variables across the pipeline 
         region = 'us-east-1' 
@@ -65,14 +62,22 @@ pipeline {
                 } 
             }
         }  
-        stage('Deploy'){
-            when {
-                expression { params.deploy }
-            }
-            steps{
-                build job: 'backend-cd-jenkins', parameters: [string(name: 'version', value: "$appVersion"),string(name: 'ENVIRONMENT', value: "dev")], wait: true
-            }
-        }
+        stage('Deploy') {
+            steps {
+                withAWS(region: 'us-east-1', credentials: 'aws-credentials') {
+                    sh """
+                        aws eks update-kubeconfig --region ${region} --name ${project}-${environment}
+
+                        cd helm
+
+                        sed -i 's/IMAGE_VERSION/${appVersion}/g' values-${environment}.yaml
+
+                        helm upgrade --install ${component} -n ${project} -f values-${environment}.yaml . 
+                    """
+
+                }
+            }    
+        } 
     } 
     post{
         always{
